@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router } from 'express';
 import redoc from 'redoc-express'
 import {
   createNewStudent,
