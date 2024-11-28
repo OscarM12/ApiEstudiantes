@@ -2,7 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import swaggerUI from "swagger-ui-express";
-import studentRouter from "./students/students.router.js";
+import studentRouter from "./students/studensts.router.js";
 import swaggerJSDoc from "swagger-jsdoc";
 import { SwaggerTheme } from "swagger-themes";
 import Redoc from 'redoc-express'
@@ -24,7 +24,7 @@ const swaggerOptions = {
       { name: "Estudiantes", description: "Operaciones relacionadas con estudiantes" },
     ],
   },
-  apis: ["./students/students.router.js"],
+  apis: ["./students/studensts.router.js"],
 };
 
 
