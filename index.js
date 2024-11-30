@@ -46,6 +46,20 @@ app.use('/docs', Redoc({
   specUrl: '/api-docs-json', 
 }));
 
+app.post("/alumnos", async (req, res) => {
+  try {
+    const result = await createNewStudent(req);
+    res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "Error al crear el estudiante",
+      error: err.message,
+    });
+  }
+});
+
+
 // Verifica la conexión a la base de datos antes de iniciar el servidor
 testConnection().then(() => {
   app.listen(port, () => {
