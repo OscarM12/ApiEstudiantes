@@ -1,7 +1,7 @@
 import { promisePool } from "../connection.js";
 export async function getAllStudents() {
   try {
-    const result = await promisePool.query("SELECT * FROM estudiantes");
+    const result = await promisePool.query("select * from estudiantes");
     return result;
   } catch (err) {
     throw new Error(err);
@@ -11,7 +11,7 @@ export async function getAllStudents() {
 export async function getStudentById(id) {
   try {
     const result = await promisePool.query(
-      "SELECT * FROM estudiantes WHERE id_alumno = ?",
+      "SELECT * FROM estudiantes WHERE id = ?",
       [id]
     );
     return result;
@@ -23,7 +23,7 @@ export async function getStudentById(id) {
 export async function deleteStudentById(id) {
   try {
     const result = await promisePool.query(
-      "DELETE FROM estudiantes WHERE id_alumno = ?",
+      "DELETE FROM estudiantes WHERE id = ?",
       [id]
     );
     return result;
@@ -48,7 +48,7 @@ export async function updateStudent(req) {
   try {
     const { id } = req.params;
     const updateFields = req.body;
-    const sql = "UPDATE estudiantes SET ? WHERE id_alumno = ?";
+    const sql = "UPDATE estudiantes SET ? WHERE id = ?";
     const result = await promisePool.query(sql, [updateFields, id]);
     return result;
   } catch (err) {
