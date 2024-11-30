@@ -120,6 +120,7 @@ studentRouter.delete("/alumnos/:id", async (req, res) => {
  *          description: Creación de un nuevo estudiante
  */
 studentRouter.post("/alumnos", async (req, res) => {
+  console.log(req.body);  // Agrega este log para verificar el cuerpo de la solicitud
   const { numControl, nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia } = req.body;
   try {
     const result = await createNewStudent({ numControl, nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia });
@@ -128,6 +129,7 @@ studentRouter.post("/alumnos", async (req, res) => {
     res.status(500).json({ message: "Error al crear el estudiante", error: err.message });
   }
 });
+
 
 /**
  * @swagger
