@@ -25,11 +25,14 @@ const studentRouter = Router();
 studentRouter.get("/alumnos", async (_, res) => {
   try {
     const result = await getAllStudents();
-    res.json(result[0]);
-  } catch (err) {
-    res.status(500).json({ message: "Error al obtener los estudiantes", error: err.message });
+    console.log(result);  // Esto debería mostrar un arreglo con todos los estudiantes
+    res.json(result);
+  } catch (error) {
+    console.error("Error al obtener los estudiantes:", error);
+    res.status(500).json({ message: "Error al obtener los estudiantes" });
   }
 });
+
 
 /**
  * @swagger
