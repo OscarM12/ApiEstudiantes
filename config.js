@@ -1,5 +1,10 @@
-export const DB = 'estudiante';
-export const DB_PASSWORD = 'Morenoram12';
-export const DB_USER = 'root';
-export const HOST = 'localhost';
-export const PORT = 8080; // Asegúrate de que esta constante esté definida y exportada
+const config = {
+    SERVER_PORT: 8080,
+    DB_USER: 'root',
+    DB_PASSWORD: 'Morenoram12',
+    DB: 'estudiante',
+    HOST: 'localhost',
+  };
+  
+  export default config; // Exporta el objeto como predeterminado
+  

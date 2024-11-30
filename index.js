@@ -7,6 +7,8 @@ import swaggerJSDoc from "swagger-jsdoc";
 import { SwaggerTheme } from "swagger-themes";
 import Redoc from 'redoc-express'
 
+import config from './config.js'; // Importar el objeto de configuración como un todo
+
 const app = express();
 const port = process.env.PORT || 8080;
 const theme = new SwaggerTheme();
@@ -51,9 +53,7 @@ app.use('/redoc', Redoc({
 }));
 
 
-
-import { SERVER_PORT } from './config.js';
-
-app.listen(SERVER_PORT, () => {
-  console.log(`Servidor corriendo en el puerto ${SERVER_PORT}`);
+// Usar el puerto definido en config.js
+app.listen(config.SERVER_PORT, () => {
+  console.log(`Servidor corriendo en el puerto ${config.SERVER_PORT}`);
 });
