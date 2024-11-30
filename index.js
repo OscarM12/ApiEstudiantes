@@ -9,7 +9,8 @@ import Redoc from 'redoc-express'
 
 const app = express();
 const port = process.env.PORT || 8080;
-const theme = new SwaggerTheme('v3')
+const theme = new SwaggerTheme();
+const customCss = theme.getBuffer('dark'); 
 
 const swaggerOptions = {
   definition: {
@@ -30,7 +31,7 @@ const swaggerOptions = {
 
 const options = {
   explorer: true,
-  customCss: theme.getBuffer('dark')
+  customCss
 };
 
 app.use(cors());
@@ -44,10 +45,11 @@ app.use('/api-docs-json', (req,res) => {
   res.json(swaggerDocs);
 })
 
-app.use('/docs', Redoc({
+app.use('/redoc', Redoc({
   title: 'Documentación de Mi API',
-  specUrl: '/api-docs-json', 
+  specUrl: '/api-docs-json',
 }));
+
 
 
 app.listen(port, () => {
