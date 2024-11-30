@@ -1,84 +1,80 @@
 import { promisePool } from "../connection.js";
 
+// Obtener todos los estudiantes
 export async function getAllStudents() {
   try {
-    const [rows] = await promisePool.query("SELECT * FROM estudiantes");
-    return rows;  // Asegúrate de que `rows` es un array con los resultados
+    const result = await promisePool.query("SELECT * FROM estudiantes");
+    return result;
   } catch (err) {
     throw new Error(err);
   }
 }
 
-
-export async function getStudentById(id) {
+// Obtener un estudiante por su numControl
+export async function getStudentById(numControl) {
   try {
     const result = await promisePool.query(
-      "SELECT * FROM estudiantes WHERE id = ?",
-      [id]
+      "SELECT * FROM estudiantes WHERE id= ?",
+      [numControl]
     );
     return result;
-  } catch (error) {
-    throw new Error(error);
+  } catch (err) {
+    throw new Error(err);
   }
 }
 
-export async function deleteStudentById(id) {
+// Eliminar un estudiante por su numControl
+export async function deleteStudentById(numControl) {
   try {
     const result = await promisePool.query(
       "DELETE FROM estudiantes WHERE id = ?",
-      [id]
+      [numControl]
     );
     return result;
-  } catch (error) {
-    throw new Error(error);
-  }
-}
-
-export async function createNewStudent(req, res) {
-  try {
-    // Verifica qué está llegando en el cuerpo de la solicitud
-    console.log('Cuerpo de la solicitud:', req.body);
-
-    // Verifica si req.body está vacío
-    if (!req.body) {
-      return res.status(400).json({ message: "Cuerpo de la solicitud vacío" });
-    }
-
-    // Desestructuración de los campos que se esperan en el cuerpo de la solicitud
-    const { numControl, nombre, apellido_paterno, apellido_materno, carrera, fotografia } = req.body;
-
-    // Verifica si alguno de los campos está ausente
-    if (!numControl || !nombre || !apellido_paterno || !apellido_materno || !carrera || !fotografia) {
-      return res.status(400).json({ message: "Faltan campos en la solicitud" });
-    }
-
-    // Inserta los datos en la base de datos
-    const result = await promisePool.query(
-      `INSERT INTO estudiantes (numControl, nombre, apellido_paterno, apellido_materno, carrera, fotografia) 
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [numControl, nombre, apellido_paterno, apellido_materno, carrera, fotografia]
-    );
-
-    // Devuelve el resultado de la inserción
-    return res.status(200).json({ message: 'Estudiante creado exitosamente', result });
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({ message: 'Error al crear el estudiante', error: err.message });
+    throw new Error(err);
+  }
+}
+
+// Crear un nuevo estudiante
+export async function createNewStudent(req) {
+  try {
+    // Extraer los datos del cuerpo de la solicitud
+    const { numControl, nombre, apellidoPaterno, apellidoMaterno, carrera } = req.body;
+
+    // Verificar que todos los campos requeridos estén presentes
+    if (!numControl || !nombre || !apellidoPaterno || !apellidoMaterno || !carrera) {
+      throw new Error("Faltan campos en la solicitud");
+    }
+
+    // Realizar la consulta para insertar el nuevo estudiante
+    const result = await promisePool.query(
+      `INSERT INTO estudiantes (numControl, nombre, apellidoPaterno, apellidoMaterno, carrera) 
+      VALUES (?, ?, ?, ?, ?)`,
+      [numControl, nombre, apellidoPaterno, apellidoMaterno, carrera]
+    );
+    return result; // Devolver el resultado de la consulta (inserción)
+  } catch (err) {
+    throw new Error(err.message); // Manejar los errores
   }
 }
 
 
 
-
-
-export async function updateStudent(req) {
+// Actualizar los datos de un estudiante
+export async function updateStudent(id, updateFields) {
   try {
-    const { id } = req.params;
-    const updateFields = req.body;
+    // Verificar que haya al menos un campo a actualizar
+    if (!updateFields.nombre && !updateFields.apellidoPaterno && !updateFields.apellidoMaterno && !updateFields.carrera) {
+      throw new Error("No hay campos para actualizar");
+    }
+
+    // Realizar la consulta de actualización usando el id
     const sql = "UPDATE estudiantes SET ? WHERE id = ?";
     const result = await promisePool.query(sql, [updateFields, id]);
     return result;
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err.message);
   }
 }
+

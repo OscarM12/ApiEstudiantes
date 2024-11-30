@@ -1,14 +1,10 @@
 import { Router } from "express";
-import redoc from 'redoc-express';
-import {
-  createNewStudent,
-  deleteStudentById,
-  getAllStudents,
-  getStudentById,
-  updateStudent,
-} from "./students.services.js";
+import express from 'express';
+import { createNewStudent, deleteStudentById, getAllStudents, getStudentById, updateStudent } from './students.services.js';
+
 
 const studentRouter = Router();
+const router = express.Router();
 
 /**
  * @swagger
@@ -109,29 +105,30 @@ studentRouter.delete("/alumnos/:id", async (req, res) => {
  *                  type: string
  *                carrera:
  *                  type: string
- *                fotografia:
- *                  type: string
  *              required:
  *                - numControl
  *                - nombre
  *                - apellidoPaterno
  *                - apellidoMaterno
  *                - carrera
- *                - fotografia
  *      responses:
  *        200:
  *          description: Creación de un nuevo estudiante
  */
+// Ruta POST para crear un nuevo estudiante
 studentRouter.post("/alumnos", async (req, res) => {
-  console.log(req.body);  // Agrega este log para verificar el cuerpo de la solicitud
-  const { numControl, nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia } = req.body;
   try {
-    const result = await createNewStudent({ numControl, nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia });
-    res.json(result[0]);
+    const result = await createNewStudent(req); // Llamar a la función para crear un nuevo estudiante
+    res.status(200).json(result); // Devolver el resultado de la creación
   } catch (err) {
-    res.status(500).json({ message: "Error al crear el estudiante", error: err.message });
+    console.error(err);
+    res.status(500).json({
+      message: "Error al crear el estudiante",
+      error: err.message,
+    });
   }
 });
+
 
 
 /**
@@ -164,8 +161,6 @@ studentRouter.post("/alumnos", async (req, res) => {
  *                  type: string
  *                carrera:
  *                  type: string
- *                fotografia:
- *                  type: string
  *              required:
  *                - nombre
  *                - apellidoPaterno
@@ -175,15 +170,19 @@ studentRouter.post("/alumnos", async (req, res) => {
  *        200:
  *          description: Se edita un estudiante en específico
  */
+// Ruta PUT para actualizar un estudiante
 studentRouter.put("/alumnos/:id", async (req, res) => {
-  const { id } = req.params;
-  const { nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia } = req.body;
+  const { id } = req.params; // Obtener el id del estudiante desde la URL
+  const { nombre, apellidoPaterno, apellidoMaterno, carrera } = req.body; // Obtener los campos a actualizar desde el cuerpo de la solicitud
+
   try {
-    const result = await updateStudent(id, { nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia });
-    res.json(result[0]);
+    // Llamar a la función para actualizar el estudiante, pasando el id y los campos a actualizar
+    const result = await updateStudent(id, { nombre, apellidoPaterno, apellidoMaterno, carrera });
+    res.json(result); // Devolver el resultado de la actualización
   } catch (err) {
     res.status(500).json({ message: "Error al actualizar el estudiante", error: err.message });
   }
 });
+
 
 export default studentRouter;

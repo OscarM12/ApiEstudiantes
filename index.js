@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import swaggerUI from "swagger-ui-express";
-import studentRouter from "./students/students.router.js";
+import studentRouter from "./students/students.router.js";  // Router importado
 import swaggerJSDoc from "swagger-jsdoc";
 import { SwaggerTheme } from "swagger-themes";
 import Redoc from 'redoc-express';
@@ -35,7 +35,7 @@ const options = {
 app.use(cors());
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs, options));
-app.use(studentRouter);
+app.use(studentRouter);  // Rutas de estudiantes ya están incluidas en el router
 
 app.use('/api-docs-json', (req, res) => {
   res.json(swaggerDocs);
@@ -45,20 +45,6 @@ app.use('/docs', Redoc({
   title: 'Documentación de Mi API',
   specUrl: '/api-docs-json', 
 }));
-
-app.post("/alumnos", async (req, res) => {
-  try {
-    const result = await createNewStudent(req);
-    res.status(200).json(result);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      message: "Error al crear el estudiante",
-      error: err.message,
-    });
-  }
-});
-
 
 // Verifica la conexión a la base de datos antes de iniciar el servidor
 testConnection().then(() => {
