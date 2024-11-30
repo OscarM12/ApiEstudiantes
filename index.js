@@ -54,14 +54,7 @@ app.use('/redoc', Redoc({
 }));
 
 
-// Realizar una consulta simple para probar la conexión
-promisePool.query('SELECT 1')
-  .then(([rows, fields]) => {
-    console.log("Conexión exitosa a la base de datos:", rows);
-  })
-  .catch(error => {
-    console.error("Error al conectar a la base de datos:", error);
-  });
+
 
 // Usar el puerto definido en config.js
 app.listen(SERVER_PORT, () => {
