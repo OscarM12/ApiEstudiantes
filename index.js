@@ -5,11 +5,10 @@ import swaggerUI from "swagger-ui-express";
 import studentRouter from "./students/studensts.router.js";
 import swaggerJSDoc from "swagger-jsdoc";
 import { SwaggerTheme } from "swagger-themes";
-import Redoc from 'redoc-express'
+import Redoc from 'redoc-express';
+import { testConnection } from './connection.js';  // Importar la función de prueba
 
-import config from './config.js'; // Importar el objeto de configuración
-
-const { DB, DB_PASSWORD, DB_USER, HOST, SERVER_PORT } = config; // Desestructurar las variables
+import { DB, DB_USER, DB_PASSWORD, HOST, SERVER_PORT } from './config.js'; // Importar la configuración
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -36,25 +35,25 @@ const options = {
   explorer: true,
   customCss
 };
-testConnection();
+
+testConnection();  // Llamar a la función de prueba de conexión
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs, options));
 app.use(studentRouter);
 
 app.use('/api-docs-json', (req, res) => {
   res.json(swaggerDocs);
-})
+});
 
 app.use('/redoc', Redoc({
   title: 'Documentación de Mi API',
   specUrl: '/api-docs-json',
 }));
-
-
-
 
 // Usar el puerto definido en config.js
 app.listen(SERVER_PORT, () => {
