@@ -55,3 +55,6 @@ app.listen(port, () => {
     `Servidor express escuchando en el puerto: http://localhost:${port}`
   );
 });
+
+import { testConnection } from './connection.js';
+testConnection();

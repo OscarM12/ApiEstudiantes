@@ -1,13 +1,14 @@
 import mysql from 'mysql2';  // Asegúrate de importar mysql2 correctamente
-import { DB, DB_PASSWORD, DB_USER, HOST } from './config.js';  // Importa las variables de configuración
+import { DB, DB_PASSWORD, DB_USER, HOST, DB_PORT } from './config.js'; // Asegúrate de incluir DB_PORT
+ // Importa las variables de configuración
 
 // Crear la conexión a la base de datos
 const pool = mysql.createPool({
-  host: HOST,
-  user: DB_USER,
-  password: DB_PASSWORD,
-  database: DB,
-  port: 3306,  // Asegúrate de que el puerto sea correcto
+  host: HOST,             // Host de la base de datos
+  user: DB_USER,          // Usuario
+  password: DB_PASSWORD,  // Contraseña
+  database: DB,           // Base de datos
+  port: DB_PORT,          // Puerto (3306 por defecto)
   waitForConnections: true,
   connectionLimit: 10,
   maxIdle: 10,
