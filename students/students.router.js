@@ -1,5 +1,5 @@
 import { Router } from "express";
-import redoc from 'redoc-express'
+import redoc from 'redoc-express';
 import {
   createNewStudent,
   deleteStudentById,
@@ -23,10 +23,13 @@ const studentRouter = Router();
  *          description: Regresa un Json con todos los usuarios
  */
 studentRouter.get("/alumnos", async (_, res) => {
-  const result = await getAllStudents();
-  res.json(result[0]);
+  try {
+    const result = await getAllStudents();
+    res.json(result[0]);
+  } catch (err) {
+    res.status(500).json({ message: "Error al obtener los estudiantes", error: err.message });
+  }
 });
-
 
 /**
  * @swagger
@@ -41,15 +44,16 @@ studentRouter.get("/alumnos", async (_, res) => {
  *          name: id
  *      responses:
  *        200:
- *          description: Regresa un usuario en especifico
- * 
+ *          description: Regresa un estudiante específico
  */
-
-
 studentRouter.get("/alumnos/:id", async (req, res) => {
   const { id } = req.params;
-  const result = await getStudentById(id);
-  res.json(result[0]);
+  try {
+    const result = await getStudentById(id);
+    res.json(result[0]);
+  } catch (err) {
+    res.status(500).json({ message: "Error al obtener el estudiante", error: err.message });
+  }
 });
 
 /**
@@ -65,14 +69,16 @@ studentRouter.get("/alumnos/:id", async (req, res) => {
  *          name: id
  *      responses:
  *        200:
- *          description: Elimina un estudiante especifico
- * 
+ *          description: Elimina un estudiante específico
  */
-
 studentRouter.delete("/alumnos/:id", async (req, res) => {
   const { id } = req.params;
-  const result = await deleteStudentById(id);
-  res.json(result[0]);
+  try {
+    const result = await deleteStudentById(id);
+    res.json({ message: "Estudiante eliminado correctamente", result });
+  } catch (err) {
+    res.status(500).json({ message: "Error al eliminar el estudiante", error: err.message });
+  }
 });
 
 /**
@@ -90,25 +96,37 @@ studentRouter.delete("/alumnos/:id", async (req, res) => {
  *            schema:
  *              type: object
  *              properties:
+ *                numControl:
+ *                  type: string
  *                nombre:
  *                  type: string
- *                apellido_materno:
+ *                apellidoPaterno:
  *                  type: string
- *                apellido_paterno:
+ *                apellidoMaterno:
+ *                  type: string
+ *                carrera:
+ *                  type: string
+ *                fotografia:
  *                  type: string
  *              required:
+ *                - numControl
  *                - nombre
- *                - apellido_materno
- *                - apellido_paterno
+ *                - apellidoPaterno
+ *                - apellidoMaterno
+ *                - carrera
+ *                - fotografia
  *      responses:
  *        200:
  *          description: Creación de un nuevo estudiante
- * 
  */
-
 studentRouter.post("/alumnos", async (req, res) => {
-  const result = await createNewStudent(req);
-  res.json(result[0]);
+  const { numControl, nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia } = req.body;
+  try {
+    const result = await createNewStudent({ numControl, nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia });
+    res.json(result[0]);
+  } catch (err) {
+    res.status(500).json({ message: "Error al crear el estudiante", error: err.message });
+  }
 });
 
 /**
@@ -118,7 +136,7 @@ studentRouter.post("/alumnos", async (req, res) => {
  *      tags:
  *        - Estudiantes
  *      summary: Edita un estudiante por su id
- *      description: Edita un estudiante mediante su id, nombre, apellido materno y apellido paterno
+ *      description: Edita un estudiante mediante su id
  *      parameters:
  *        - in: path
  *          name: id
@@ -133,27 +151,34 @@ studentRouter.post("/alumnos", async (req, res) => {
  *            schema:
  *              type: object
  *              properties:
- *                id:
- *                  type: integer
  *                nombre:
  *                  type: string
- *                apellido_materno:
+ *                apellidoPaterno:
  *                  type: string
- *                apellido_paterno:
+ *                apellidoMaterno:
+ *                  type: string
+ *                carrera:
+ *                  type: string
+ *                fotografia:
  *                  type: string
  *              required:
- *                - id
  *                - nombre
- *                - apellido_materno
- *                - apellido_paterno
+ *                - apellidoPaterno
+ *                - apellidoMaterno
+ *                - carrera
  *      responses:
  *        200:
  *          description: Se edita un estudiante en específico
  */
-
 studentRouter.put("/alumnos/:id", async (req, res) => {
-  const result = await updateStudent(req);
-  res.json(result[0]);
+  const { id } = req.params;
+  const { nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia } = req.body;
+  try {
+    const result = await updateStudent(id, { nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia });
+    res.json(result[0]);
+  } catch (err) {
+    res.status(500).json({ message: "Error al actualizar el estudiante", error: err.message });
+  }
 });
 
 export default studentRouter;
