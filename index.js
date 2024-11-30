@@ -30,7 +30,6 @@ const swaggerOptions = {
 
 const options = {
   explorer: true,
-  customCss: theme.getBuffer('dark')
 };
 
 app.use(cors());
@@ -43,6 +42,7 @@ app.use(studentRouter);
 app.use('/api-docs-json', (req,res) => {
   res.json(swaggerDocs);
 })
+
 
 app.use('/docs', Redoc({
   title: 'Documentación de Mi API',

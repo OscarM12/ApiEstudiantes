@@ -12,7 +12,7 @@ const studentRouter = Router();
 
 /**
  * @swagger
- * /alumnos/:
+ * /alumnos:
  *    get:
  *      tags:
  *        - Estudiantes
@@ -21,7 +21,6 @@ const studentRouter = Router();
  *      responses:
  *        200:
  *          description: Regresa un Json con todos los usuarios
- * 
  */
 studentRouter.get("/alumnos", async (_, res) => {
   const result = await getAllStudents();
