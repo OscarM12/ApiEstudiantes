@@ -6,5 +6,5 @@ const config = {
     HOST: 'localhost',
   };
   
-  export default config; // Exporta el objeto como predeterminado
+  export default config; // Exportar el objeto como predeterminado
   
