@@ -36,15 +36,28 @@ export async function deleteStudentById(id) {
 
 export async function createNewStudent(req) {
   try {
-    const { nombre, apellido_materno, apellido_paterno } = req.body;
+    // Verifica qué está llegando en el cuerpo de la solicitud
+    console.log('Cuerpo de la solicitud:', req.body);
+
+    // Desestructuración de los campos que se esperan en el cuerpo de la solicitud
+    const { numControl, nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia } = req.body;
+
+    // Inserta los datos en la base de datos
     const result = await promisePool.query(
-      `INSERT INTO estudiantes VALUES (null,'${nombre}', '${apellido_materno}', '${apellido_paterno}')`
+      `INSERT INTO estudiantes (numControl, nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia) 
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [numControl, nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia]
     );
+
+    // Devuelve el resultado de la inserción
     return result;
   } catch (err) {
+    console.log(err);
     throw new Error(err);
   }
 }
+
+
 
 export async function updateStudent(req) {
   try {
