@@ -34,38 +34,39 @@ export async function deleteStudentById(id) {
   }
 }
 
-export async function createNewStudent(req) {
+export async function createNewStudent(req, res) {
   try {
     // Verifica qué está llegando en el cuerpo de la solicitud
     console.log('Cuerpo de la solicitud:', req.body);
 
     // Verifica si req.body está vacío
     if (!req.body) {
-      throw new Error("Cuerpo de la solicitud vacío");
+      return res.status(400).json({ message: "Cuerpo de la solicitud vacío" });
     }
 
     // Desestructuración de los campos que se esperan en el cuerpo de la solicitud
-    const { numControl, nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia } = req.body;
+    const { numControl, nombre, apellido_paterno, apellido_materno, carrera, fotografia } = req.body;
 
     // Verifica si alguno de los campos está ausente
-    if (!numControl || !nombre || !apellidoPaterno || !apellidoMaterno || !carrera || !fotografia) {
-      throw new Error("Faltan campos en la solicitud");
+    if (!numControl || !nombre || !apellido_paterno || !apellido_materno || !carrera || !fotografia) {
+      return res.status(400).json({ message: "Faltan campos en la solicitud" });
     }
 
     // Inserta los datos en la base de datos
     const result = await promisePool.query(
-      `INSERT INTO estudiantes (numControl, nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia) 
+      `INSERT INTO estudiantes (numControl, nombre, apellido_paterno, apellido_materno, carrera, fotografia) 
        VALUES (?, ?, ?, ?, ?, ?)`,
-      [numControl, nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia]
+      [numControl, nombre, apellido_paterno, apellido_materno, carrera, fotografia]
     );
 
     // Devuelve el resultado de la inserción
-    return result;
+    return res.status(200).json({ message: 'Estudiante creado exitosamente', result });
   } catch (err) {
     console.log(err);
-    throw new Error(err.message);
+    return res.status(500).json({ message: 'Error al crear el estudiante', error: err.message });
   }
 }
+
 
 
 
