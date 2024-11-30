@@ -39,8 +39,18 @@ export async function createNewStudent(req) {
     // Verifica qué está llegando en el cuerpo de la solicitud
     console.log('Cuerpo de la solicitud:', req.body);
 
+    // Verifica si req.body está vacío
+    if (!req.body) {
+      throw new Error("Cuerpo de la solicitud vacío");
+    }
+
     // Desestructuración de los campos que se esperan en el cuerpo de la solicitud
     const { numControl, nombre, apellidoPaterno, apellidoMaterno, carrera, fotografia } = req.body;
+
+    // Verifica si alguno de los campos está ausente
+    if (!numControl || !nombre || !apellidoPaterno || !apellidoMaterno || !carrera || !fotografia) {
+      throw new Error("Faltan campos en la solicitud");
+    }
 
     // Inserta los datos en la base de datos
     const result = await promisePool.query(
@@ -53,9 +63,10 @@ export async function createNewStudent(req) {
     return result;
   } catch (err) {
     console.log(err);
-    throw new Error(err);
+    throw new Error(err.message);
   }
 }
+
 
 
 
