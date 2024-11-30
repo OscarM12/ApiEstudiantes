@@ -52,8 +52,8 @@ app.use('/redoc', Redoc({
 
 
 
-app.listen(port, () => {
-  console.log(
-    `Servidor express escuchando en el puerto: http://localhost:${port}`
-  );
+import { SERVER_PORT } from './config.js';
+
+app.listen(SERVER_PORT, () => {
+  console.log(`Servidor corriendo en el puerto ${SERVER_PORT}`);
 });
