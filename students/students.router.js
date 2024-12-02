@@ -18,17 +18,17 @@ const studentRouter = Router();
  *        200:
  *          description: Regresa un Json con todos los usuarios
  */
-studentRouter.get("/alumnos", async (_, res) => {
-  try {
-    const result = await getAllStudents();
-    console.log(result);  // Esto debería mostrar un arreglo con todos los estudiantes
-    res.json(result);
-  } catch (error) {
-    console.error("Error al obtener los estudiantes:", error);
-    res.status(500).json({ message: "Error al obtener los estudiantes" });
-  }
-});
+studentRouter.get('/', (req, res) => {
+  req.getConnection((err, connection) => {
+      if (err) return res.status(500).send(err);
 
+      connection.query('SELECT * FROM estudiantes', (err, results) => {
+          if (err) return res.status(500).send(err);
+
+          res.json(results);
+      });
+  });
+});
 
 /**
  * @swagger
