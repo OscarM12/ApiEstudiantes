@@ -1,5 +1,5 @@
 import { Router } from "express";
-import express from 'express';
+
 import { createNewStudent, deleteStudentById, getAllStudents, getStudentById, updateStudent } from './students.services.js';
 
 
@@ -31,7 +31,7 @@ studentRouter.get('/', (req, res) => {
         return res.status(500).json({ error: 'Error al consultar los datos' });
       }
 
-      res.json(results); // Devuelve los resultados en formato JSON
+      res.json(results[0]); // Devuelve los resultados en formato JSON
     });
   });
 });
