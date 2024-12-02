@@ -10,8 +10,8 @@ import { testConnection } from "./connection.js";
 const app = express();
 const port = process.env.PORT || 8080;
 
-// Configuración del tema de Swagger (opcional)
-const theme = new SwaggerTheme("v3");
+// Configuración del tema de Swagger
+const theme = new SwaggerTheme("v3"); // Especificamos que es para Swagger 3
 
 // Configuración de Swagger para documentación
 const swaggerOptions = {
@@ -45,8 +45,17 @@ const swaggerDocs = swaggerJSDoc(swaggerOptions);
 app.use(cors()); // Habilita CORS para permitir solicitudes desde otros orígenes
 app.use(express.json()); // Middleware para manejar datos en formato JSON
 
-// Rutas para documentación
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs)); // Swagger UI
+// Rutas para documentación con tema "outline"
+app.use(
+  "/api-docs",
+  swaggerUI.serve,
+  swaggerUI.setup(swaggerDocs, {
+    explorer: true,
+    customCss: theme.getBuffer("outline"), // Aplica el tema "outline"
+  })
+);
+
+// Endpoint para Redoc
 app.use("/api-docs-json", (req, res) => {
   res.json(swaggerDocs); // Endpoint para Redoc
 });
