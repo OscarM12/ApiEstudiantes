@@ -42,7 +42,11 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
 // Middlewares
-app.use(cors()); // Habilita CORS para permitir solicitudes desde otros orígenes
+app.use(cors({
+  origin: "*", // Permite cualquier origen
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+})); // Habilita CORS para permitir solicitudes desde otros orígenes
 app.use(express.json()); // Middleware para manejar datos en formato JSON
 
 // Rutas para documentación con tema "outline"
