@@ -4,7 +4,7 @@ import { createNewStudent, deleteStudentById, getAllStudents, getStudentById, up
 
 
 const studentRouter = Router();
-const router = express.Router();
+
 
 /**
  * @swagger
