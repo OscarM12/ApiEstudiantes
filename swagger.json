@@ -1,85 +1,100 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-      "title": "API de Estudiantes",
-      "version": "1.0.0",
-      "description": "API para informacion de estudiantes"
-    },
-    "servers": [
-      {
-        "url": "http://localhost:8080",
-        "description": "Servidor de desarrollo"
-      }
-    ],
-    "paths": {
-      "/students": {
-        "get": {
-          "summary": "Obtener lista de estudiantes",
-          "responses": {
-            "200": {
-              "description": "Lista de estudiantes obtenida correctamente",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "students": [
-                      {
-                        "id": 1,
-                        "numero": 19100220,
-                        "name": "Juan",
-                        "apellidoPaterno":"Perez",
-                        "apellidoMaterno":"Ramon",
-                        "carrera":"Sistemas",
-                        "foto":"asdasdasdasd"
-                      },
-                      {
-                       "id": 1,
-                        "numero": 19100225,
-                        "name": "Oscar",
-                        "apellidoPaterno":"Moreno",
-                        "apellidoMaterno":"Ramon",
-                        "carrera":"Industrial",
-                        "foto":"asdasdasdasd"
-                      }
-                    ]
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de Estudiantes",
+    "version": "1.0.0",
+    "description": "API para información de estudiantes"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Servidor de desarrollo"
+    }
+  ],
+  "paths": {
+    "/students": {
+      "get": {
+        "summary": "Obtener lista de estudiantes",
+        "responses": {
+          "200": {
+            "description": "Lista de estudiantes obtenida correctamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Estudiante"
                   }
                 }
               }
             }
           }
         }
-      },
-      "/students/{id}": {
-        "get": {
-          "summary": "Obtener información de un estudiante por ID",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer"
-              },
-              "description": "ID del estudiante"
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Información del estudiante obtenida correctamente",
-              "content": {
-                "application/json": {
-                  "example": {
-                    "id": 1,
-                    "name": "Juan Pérez",
-                    "grade": "A"
-                  }
+      }
+    },
+    "/students/{id}": {
+      "get": {
+        "summary": "Obtener información de un estudiante por ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID del estudiante"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Información del estudiante obtenida correctamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Estudiante"
                 }
               }
-            },
-            "404": {
-              "description": "Estudiante no encontrado"
             }
+          },
+          "404": {
+            "description": "Estudiante no encontrado"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Estudiante": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "numero": {
+            "type": "integer",
+            "example": 19100220
+          },
+          "name": {
+            "type": "string",
+            "example": "Juan"
+          },
+          "apellidoPaterno": {
+            "type": "string",
+            "example": "Perez"
+          },
+          "apellidoMaterno": {
+            "type": "string",
+            "example": "Ramon"
+          },
+          "carrera": {
+            "type": "string",
+            "example": "Sistemas"
           }
         }
       }
     }
   }
+}
