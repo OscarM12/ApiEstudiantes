@@ -11,7 +11,7 @@ const app = express();
 const port = process.env.PORT || 8080;
 
 // Configuración del tema de Swagger
-const theme = new SwaggerTheme("v3"); // Especificamos que es para Swagger 3
+const theme = new SwaggerTheme(); // Elimina la versión explícita
 
 // Configuración de Swagger para documentación
 const swaggerOptions = {
