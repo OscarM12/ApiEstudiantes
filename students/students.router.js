@@ -20,15 +20,22 @@ const studentRouter = Router();
  */
 studentRouter.get('/', (req, res) => {
   req.getConnection((err, connection) => {
-      if (err) return res.status(500).send(err);
+    if (err) {
+      console.error('Error al obtener la conexión:', err);
+      return res.status(500).json({ error: 'Error en la conexión a la base de datos' });
+    }
 
-      connection.query('SELECT * FROM estudiantes', (err, results) => {
-          if (err) return res.status(500).send(err);
+    connection.query('SELECT * FROM estudiantes', (err, results) => {
+      if (err) {
+        console.error('Error al ejecutar la consulta:', err);
+        return res.status(500).json({ error: 'Error al consultar los datos' });
+      }
 
-          res.json(results);
-      });
+      res.json(results); // Devuelve los resultados en formato JSON
+    });
   });
 });
+
 
 /**
  * @swagger
