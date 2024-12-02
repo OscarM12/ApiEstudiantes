@@ -3,12 +3,13 @@ import { promisePool } from "../connection.js";
 // Obtener todos los estudiantes
 export async function getAllStudents() {
   try {
-    const result = await promisePool.query("SELECT * FROM estudiantes");
-    return result;
+    const [rows] = await promisePool.query("SELECT * FROM estudiantes");
+    return rows; // Devuelve solo las filas
   } catch (err) {
     throw new Error(err);
   }
 }
+
 
 // Obtener un estudiante por su numControl
 export async function getStudentById(numControl) {

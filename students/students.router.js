@@ -18,23 +18,16 @@ const studentRouter = Router();
  *        200:
  *          description: Regresa un Json con todos los usuarios
  */
-studentRouter.get('/', (req, res) => {
-  req.getConnection((err, connection) => {
-    if (err) {
-      console.error('Error al obtener la conexión:', err);
-      return res.status(500).json({ error: 'Error en la conexión a la base de datos' });
-    }
-
-    connection.query('SELECT * FROM estudiantes', (err, results) => {
-      if (err) {
-        console.error('Error al ejecutar la consulta:', err);
-        return res.status(500).json({ error: 'Error al consultar los datos' });
-      }
-
-      res.json(results[0]); // Devuelve los resultados en formato JSON
-    });
-  });
+studentRouter.get("/alumnos", async (req, res) => {
+  try {
+    const students = await getAllStudents(); // Obtiene solo las filas
+    res.status(200).json(students); // Devuelve los datos en formato JSON
+  } catch (err) {
+    console.error("Error al obtener los estudiantes:", err.message);
+    res.status(500).json({ error: "Error al obtener los estudiantes" });
+  }
 });
+
 
 
 /**
