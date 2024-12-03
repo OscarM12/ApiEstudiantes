@@ -6,104 +6,114 @@ import { SwaggerTheme } from "swagger-themes";
 import Redoc from "redoc-express";
 import studentRouter from "./students/students.router.js"; // Rutas de estudiantes
 import { testConnection } from "./connection.js";
-import { getTagsFromDatabase } from "./databaseQueries.js"; // Función para obtener datos de la base de datos
 
 const app = express();
 const port = process.env.PORT || 8080;
 
-// Middleware
-app.use(cors({
-  origin: "*", 
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-}));
-
-app.use(express.json());
+// Configuración del tema de Swagger
+const theme = new SwaggerTheme(); // Elimina la versión explícita
 
 // Configuración de Swagger para documentación
-const theme = new SwaggerTheme();
-
-// Función que obtiene los tags de la base de datos
-async function generateSwaggerTags() {
-  try {
-    const tagsFromDb = await getTagsFromDatabase(); // Obtener los datos desde la base de datos
-    const tags = tagsFromDb.map((tag) => ({
-      name: tag.name, // El nombre de la categoría o lo que sea relevante
-      description: tag.description || "Descripción no disponible", // Descripción si está disponible
-    }));
-    
-    return tags;
-  } catch (error) {
-    console.error("Error al obtener los tags desde la base de datos:", error);
-    return [
-      { name: "Estudiantes", description: "Operaciones relacionadas con estudiantes" }
-    ]; // Valor por defecto
-  }
-}
-
-// Función para generar la documentación Swagger
-async function generateSwaggerDocs() {
-  const tags = await generateSwaggerTags();
-
-  const swaggerOptions = {
-    definition: {
-      openapi: "3.0.0",
-      info: {
-        title: "API de Estudiantes",
-        version: "1.0.0",
-        description: "API para la gestión de estudiantes. Consulta el README.md para más detalles.",
-      },
-      servers: [
-        { url: `https://railwayapideploy-production.up.railway.app`, description: "Servidor en producción" },
-        { url: `http://localhost:${port}`, description: "Servidor local de desarrollo" },
-      ],
-      tags, // Aquí se agregan los tags dinámicamente
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "API de Estudiantes",
+      version: "1.0.0",
+      description: "API para la gestión de estudiantes. Consulta el README.md para más detalles.",
     },
-    apis: ["./students/students.router.js", "./index.js"], // Incluye este archivo para usar las definiciones Swagger
-  };
+    servers: [
+      {
+        url: `https://railwayapideploy-production.up.railway.app`,
+        description: "Servidor en producción",
+      },
+      {
+        url: `http://localhost:${port}`,
+        description: "Servidor local de desarrollo",
+      },
+    ],
+    tags: [
+      { name: "Estudiantes", description: "Operaciones relacionadas con estudiantes" },
+    ],
+  },
+  apis: ["./students/students.router.js", "./index.js"], // Incluye este archivo para usar las definiciones Swagger
+};
 
-  return swaggerJSDoc(swaggerOptions);
-}
+const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
-async function startServer() {
-  const swaggerDocs = await generateSwaggerDocs(); // Obtener la documentación Swagger
+// Middlewares
+app.use(cors({
+  origin: "*", // Permite cualquier origen
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+})); // Habilita CORS para permitir solicitudes desde otros orígenes
 
-  // Rutas para documentación con tema "outline"
-  app.use(
-    "/api-docs",
-    swaggerUI.serve,
-    swaggerUI.setup(swaggerDocs, {
-      explorer: true,
-      customCss: theme.getBuffer("outline"),
-    })
-  );
+app.use(express.json()); // Middleware para manejar datos en formato JSON
 
-  // Endpoint para Redoc
-  app.use("/api-docs-json", (req, res) => {
-    res.json(swaggerDocs); // Endpoint para Redoc
-  });
-  app.use(
-    "/docs",
-    Redoc({
-      title: "Documentación de API de Estudiantes",
-      specUrl: "/api-docs-json", // Usa el JSON generado por Swagger JSDoc
-    })
-  );
+// Rutas para documentación con tema "outline"
+app.use(
+  "/api-docs",
+  swaggerUI.serve,
+  swaggerUI.setup(swaggerDocs, {
+    explorer: true,
+    customCss: theme.getBuffer("outline"), // Aplica el tema "outline"
+  })
+);
 
-  // Rutas principales
-  app.use(studentRouter);
+// Endpoint para Redoc
+app.use("/api-docs-json", (req, res) => {
+  res.json(swaggerDocs); // Endpoint para Redoc
+});
+app.use(
+  "/docs",
+  Redoc({
+    title: "Documentación de API de Estudiantes",
+    specUrl: "/api-docs-json", // Usa el JSON generado por Swagger JSDoc
+  })
+);
 
-  // Verifica la conexión a la base de datos antes de iniciar el servidor
-  testConnection()
-    .then(() => {
-      app.listen(port, () => {
-        console.log(`Servidor escuchando en: http://localhost:${port}`);
-      });
-    })
-    .catch((err) => {
-      console.error("Error de conexión a la base de datos:", err);
-      process.exit(1); // Finaliza el proceso si no se puede conectar a la base de datos
+// Rutas principales
+app.use(studentRouter); // Rutas definidas en `students.router.js`
+
+// Verifica la conexión a la base de datos antes de iniciar el servidor
+testConnection()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Servidor escuchando en: http://localhost:${port}`);
     });
-}
+  })
+  .catch((err) => {
+    console.error("Error de conexión a la base de datos:", err);
+    process.exit(1); // Finaliza el proceso si no se puede conectar a la base de datos
+  });
 
-startServer(); // Inicia el servidor
+/**
+ * @swagger
+ * components:
+ *    schemas:
+ *       Estudiante:
+ *         type: object
+ *         properties:
+ *           id_estudiante:
+ *             type: number
+ *             example: 101
+ *           nombre:
+ *             type: string
+ *             example: Juan
+ *           apellido_paterno:
+ *             type: string
+ *             example: Pérez
+ *           apellido_materno:
+ *             type: string
+ *             example: López
+ *           carrera:
+ *             type: string
+ *             example: Ingeniería en Sistemas Computacionales
+ */
+
+/**
+ * @swagger
+ * tags:
+ * - name: Estudiantes
+ *   description: Gestión de estudiantes
+ */
