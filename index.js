@@ -6,114 +6,104 @@ import { SwaggerTheme } from "swagger-themes";
 import Redoc from "redoc-express";
 import studentRouter from "./students/students.router.js"; // Rutas de estudiantes
 import { testConnection } from "./connection.js";
+import { getTagsFromDatabase } from "./databaseQueries.js"; // Función para obtener datos de la base de datos
 
 const app = express();
 const port = process.env.PORT || 8080;
 
-// Configuración del tema de Swagger
-const theme = new SwaggerTheme(); // Elimina la versión explícita
-
-// Configuración de Swagger para documentación
-const swaggerOptions = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "API de Estudiantes",
-      version: "1.0.0",
-      description: "API para la gestión de estudiantes. Consulta el README.md para más detalles.",
-    },
-    servers: [
-      {
-        url: `https://railwayapideploy-production.up.railway.app`,
-        description: "Servidor en producción",
-      },
-      {
-        url: `http://localhost:${port}`,
-        description: "Servidor local de desarrollo",
-      },
-    ],
-    tags: [
-      { name: "Estudiantes", description: "Operaciones relacionadas con estudiantes" },
-    ],
-  },
-  apis: ["./students/students.router.js", "./index.js"], // Incluye este archivo para usar las definiciones Swagger
-};
-
-const swaggerDocs = swaggerJSDoc(swaggerOptions);
-
-// Middlewares
+// Middleware
 app.use(cors({
-  origin: "*", // Permite cualquier origen
+  origin: "*", 
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
-})); // Habilita CORS para permitir solicitudes desde otros orígenes
+}));
 
-app.use(express.json()); // Middleware para manejar datos en formato JSON
+app.use(express.json());
 
-// Rutas para documentación con tema "outline"
-app.use(
-  "/api-docs",
-  swaggerUI.serve,
-  swaggerUI.setup(swaggerDocs, {
-    explorer: true,
-    customCss: theme.getBuffer("outline"), // Aplica el tema "outline"
-  })
-);
+// Configuración de Swagger para documentación
+const theme = new SwaggerTheme();
 
-// Endpoint para Redoc
-app.use("/api-docs-json", (req, res) => {
-  res.json(swaggerDocs); // Endpoint para Redoc
-});
-app.use(
-  "/docs",
-  Redoc({
-    title: "Documentación de API de Estudiantes",
-    specUrl: "/api-docs-json", // Usa el JSON generado por Swagger JSDoc
-  })
-);
+// Función que obtiene los tags de la base de datos
+async function generateSwaggerTags() {
+  try {
+    const tagsFromDb = await getTagsFromDatabase(); // Obtener los datos desde la base de datos
+    const tags = tagsFromDb.map((tag) => ({
+      name: tag.name, // El nombre de la categoría o lo que sea relevante
+      description: tag.description || "Descripción no disponible", // Descripción si está disponible
+    }));
+    
+    return tags;
+  } catch (error) {
+    console.error("Error al obtener los tags desde la base de datos:", error);
+    return [
+      { name: "Estudiantes", description: "Operaciones relacionadas con estudiantes" }
+    ]; // Valor por defecto
+  }
+}
 
-// Rutas principales
-app.use(studentRouter); // Rutas definidas en `students.router.js`
+// Función para generar la documentación Swagger
+async function generateSwaggerDocs() {
+  const tags = await generateSwaggerTags();
 
-// Verifica la conexión a la base de datos antes de iniciar el servidor
-testConnection()
-  .then(() => {
-    app.listen(port, () => {
-      console.log(`Servidor escuchando en: http://localhost:${port}`);
-    });
-  })
-  .catch((err) => {
-    console.error("Error de conexión a la base de datos:", err);
-    process.exit(1); // Finaliza el proceso si no se puede conectar a la base de datos
+  const swaggerOptions = {
+    definition: {
+      openapi: "3.0.0",
+      info: {
+        title: "API de Estudiantes",
+        version: "1.0.0",
+        description: "API para la gestión de estudiantes. Consulta el README.md para más detalles.",
+      },
+      servers: [
+        { url: `https://railwayapideploy-production.up.railway.app`, description: "Servidor en producción" },
+        { url: `http://localhost:${port}`, description: "Servidor local de desarrollo" },
+      ],
+      tags, // Aquí se agregan los tags dinámicamente
+    },
+    apis: ["./students/students.router.js", "./index.js"], // Incluye este archivo para usar las definiciones Swagger
+  };
+
+  return swaggerJSDoc(swaggerOptions);
+}
+
+async function startServer() {
+  const swaggerDocs = await generateSwaggerDocs(); // Obtener la documentación Swagger
+
+  // Rutas para documentación con tema "outline"
+  app.use(
+    "/api-docs",
+    swaggerUI.serve,
+    swaggerUI.setup(swaggerDocs, {
+      explorer: true,
+      customCss: theme.getBuffer("outline"),
+    })
+  );
+
+  // Endpoint para Redoc
+  app.use("/api-docs-json", (req, res) => {
+    res.json(swaggerDocs); // Endpoint para Redoc
   });
+  app.use(
+    "/docs",
+    Redoc({
+      title: "Documentación de API de Estudiantes",
+      specUrl: "/api-docs-json", // Usa el JSON generado por Swagger JSDoc
+    })
+  );
 
-/**
- * @swagger
- * components:
- *    schemas:
- *       Estudiante:
- *         type: object
- *         properties:
- *           id_estudiante:
- *             type: number
- *             example: 101
- *           nombre:
- *             type: string
- *             example: Juan
- *           apellido_paterno:
- *             type: string
- *             example: Pérez
- *           apellido_materno:
- *             type: string
- *             example: López
- *           carrera:
- *             type: string
- *             example: Ingeniería en Sistemas Computacionales
- */
+  // Rutas principales
+  app.use(studentRouter);
 
-/**
- * @swagger
- * tags:
- * - name: Estudiantes
- *   description: Gestión de estudiantes
- */
+  // Verifica la conexión a la base de datos antes de iniciar el servidor
+  testConnection()
+    .then(() => {
+      app.listen(port, () => {
+        console.log(`Servidor escuchando en: http://localhost:${port}`);
+      });
+    })
+    .catch((err) => {
+      console.error("Error de conexión a la base de datos:", err);
+      process.exit(1); // Finaliza el proceso si no se puede conectar a la base de datos
+    });
+}
+
+startServer(); // Inicia el servidor

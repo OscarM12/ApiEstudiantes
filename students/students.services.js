@@ -1,14 +1,18 @@
 import { promisePool } from "../connection.js";
 
-// Obtener todos los estudiantes
-export async function getAllStudents() {
+// students.services.js
+
+import { db } from '../connection.js';  // Suponiendo que tienes una conexión a la base de datos
+
+export const getAllStudents = async () => {
   try {
-    const [rows] = await promisePool.query("SELECT * FROM estudiantes");
-    return rows; // Devuelve solo las filas
+    const [rows] = await db.query("SELECT * FROM estudiantes");  // Consulta a la base de datos
+    return rows;  // Retorna todos los estudiantes
   } catch (err) {
-    throw new Error(err);
+    throw new Error("Error al obtener los estudiantes");
   }
-}
+};
+
 
 
 // Obtener un estudiante por su numControl
