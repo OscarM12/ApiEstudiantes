@@ -23,11 +23,11 @@ const swaggerOptions = {
       description: "API para la gestión de estudiantes. Consulta el README.md para más detalles.",
     },
     servers: [
-      {
-        url: `https://railwayapideploy-production.up.railway.app`,
-        description: "Servidor en producción",
-      },
       
+      {
+        url: `https://localhost:${port}`,
+        description: "Servidor local de desarrollo",
+      },
     ],
     tags: [
       { name: "Estudiantes", description: "Operaciones relacionadas con estudiantes" },
