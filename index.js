@@ -28,7 +28,6 @@ const swaggerOptions = {
         description: "Servidor local de desarrollo",
       },
     ],
-    
     tags: [
       { name: "Estudiantes", description: "Operaciones relacionadas con estudiantes" },
     ],
@@ -38,14 +37,12 @@ const swaggerOptions = {
 
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
-// Middlewares
+// Configuración de CORS
 app.use(cors({
-  origin: ['https://railwayapideploy-production.up.railway.app', 'https://localhost:8080'], // Permite localhost o otros orígenes
+  origin: ['https://railwayapideploy-production.up.railway.app', 'http://localhost:8080'], // Permite localhost o otros orígenes
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
-app.use(cors(corsOptions));
-
 
 app.use(express.json()); 
 
@@ -78,7 +75,7 @@ app.use(studentRouter); // Rutas definidas en `students.router.js`
 testConnection()
   .then(() => {
     app.listen(port, () => {
-      console.log(`Servidor escuchando en: https://localhost:${port}`);
+      console.log(`Servidor escuchando en: http://localhost:${port}`);
     });
   })
   .catch((err) => {
