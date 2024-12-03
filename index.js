@@ -75,7 +75,7 @@ app.use(studentRouter); // Rutas definidas en `students.router.js`
 testConnection()
   .then(() => {
     app.listen(port, () => {
-      console.log(`Servidor escuchando en: http://localhost:${port}`);
+      console.log(`Servidor escuchando en: https://railwayapideploy-production.up.railway.app`);
     });
   })
   .catch((err) => {
