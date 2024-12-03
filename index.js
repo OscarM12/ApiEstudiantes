@@ -43,10 +43,11 @@ const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
 // Middlewares
 app.use(cors({
-  origin: "*", // Permite cualquier origen
+  origin: ['https://railwayapideploy-production.up.railway.app'], // Especifica los orígenes permitidos
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
-})); // Habilita CORS para permitir solicitudes desde otros orígenes
+}));
+
 
 app.use(express.json()); // Middleware para manejar datos en formato JSON
 
