@@ -38,12 +38,12 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
 // Configuración de CORS
-app.use(cors({
-  origin: ['https://railwayapideploy-production.up.railway.app', 'http://localhost:8080'], // Permite localhost o otros orígenes
+const corsOptions = {
+  origin: '*', // Permite localhost o otros orígenes
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
-}));
-
+};
+app.use(cors(corsOptions));
 app.use(express.json()); 
 
 // Rutas para documentación con tema "outline"
