@@ -2,7 +2,7 @@ import { promisePool } from "../connection.js";
 
 // students.services.js
 
-import { db } from '../connection.js';  // Suponiendo que tienes una conexión a la base de datos
+import { db } from '../config.js';  // Suponiendo que tienes una conexión a la base de datos
 
 export const getAllStudents = async () => {
   try {
