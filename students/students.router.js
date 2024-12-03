@@ -16,8 +16,15 @@ const studentRouter = Router();
  *      description: Obtiene todos los estudiantes
  *      responses:
  *        200:
- *          description: Regresa un Json con todos los usuarios
+ *          description: Lista de estudiantes en formato JSON
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/Estudiante'
  */
+
 studentRouter.get("/alumnos", async (req, res) => {
   try {
     const students = await getAllStudents(); // Obtiene solo las filas
