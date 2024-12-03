@@ -28,7 +28,7 @@ const swaggerOptions = {
         description: "Servidor en producción",
       },
       {
-        url: `http://localhost:${port}`,
+        url: `https://localhost:${port}`,
         description: "Servidor local de desarrollo",
       },
     ],
@@ -43,13 +43,13 @@ const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
 // Middlewares
 app.use(cors({
-  origin: ['https://railwayapideploy-production.up.railway.app'], // Especifica los orígenes permitidos
+  origin: ['https://railwayapideploy-production.up.railway.app'], 
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
 
-app.use(express.json()); // Middleware para manejar datos en formato JSON
+app.use(express.json()); 
 
 // Rutas para documentación con tema "outline"
 app.use(
@@ -57,7 +57,7 @@ app.use(
   swaggerUI.serve,
   swaggerUI.setup(swaggerDocs, {
     explorer: true,
-    customCss: theme.getBuffer("outline"), // Aplica el tema "outline"
+    customCss: theme.getBuffer("outline"), 
   })
 );
 
